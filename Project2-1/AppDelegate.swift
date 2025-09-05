@@ -1,36 +1,43 @@
-//
-//  AppDelegate.swift
-//  Project2-1
-//
-//  Created by 황동혁 on 9/4/25.
-//
-
 import UIKit
+import SwiftyDropbox
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        // 드롭박스 초기화
+        DropboxClientsManager.setupWithAppKey("1em5fe2y4ez7g4k")
+        
         return true
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        
+        // 드롭박스 OAuth 콜백 처리
+        let oauthCompletion: DropboxOAuthCompletion = { authResult in
+            if let authResult = authResult {
+                switch authResult {
+                case .success:
+                    print("드롭박스 인증 성공!")
+                    NotificationCenter.default.post(name: NSNotification.Name("DropboxAuthSuccess"), object: nil)
+                case .cancel:
+                    print("드롭박스 인증 취소")
+                case .error(_, let description):
+                    print("드롭박스 인증 오류: \(description ?? "")")
+                }
+            }
+        }
+        
+        let canHandleUrl = DropboxClientsManager.handleRedirectURL(url, includeBackgroundClient: false, completion: oauthCompletion)
+        
+        return canHandleUrl
     }
 
     // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
-
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
-    }
-
-
 }
 
