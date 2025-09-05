@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div id="player"></div>
+
+    <script>
+        // 2. IFrame Player API 스크립트를 비동기적으로 로드합니다.
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // 3. API 코드가 다운로드되면 이 함수가 플레이어를 생성합니다.
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                // 플레이어 크기를 화면에 꽉 채우도록 설정
+                height: '100%',
+                width: '100%',
+                // 비디오 ID는 Swift 코드에서 직접 지정할 것이므로 여기서는 비워둡니다.
+                videoId: '',
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        // 4. 플레이어가 준비되면 호출될 함수 (여기서는 아무것도 안함)
+        function onPlayerReady(event) {
+            // event.target.playVideo(); // 자동 재생이 필요하면 주석 해제
+        }
+
+        // 5. Swift 코드에서 호출할 함수: 비디오 ID를 받아와 재생합니다.
+        function loadVideoById(videoId) {
+            player.loadVideoById(videoId);
+        }
+    </script>
+</body>
+</html>
