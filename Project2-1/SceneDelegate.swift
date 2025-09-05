@@ -24,26 +24,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
              window?.makeKeyAndVisible()
         }
     
-    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-          for context in URLContexts {
-              let oauthCompletion: DropboxOAuthCompletion = { authResult in
-                  if let authResult = authResult {
-                      switch authResult {
-                      case .success:
-                          print("드롭박스 인증 성공!")
-                          // 메인 뷰컨트롤러에 인증 완료 알림
-                          NotificationCenter.default.post(name: NSNotification.Name("DropboxAuthSuccess"), object: nil)
-                      case .cancel:
-                          print("드롭박스 인증 취소")
-                      case .error(_, let description):
-                          print("드롭박스 인증 오류: \(description ?? "")")
-                      }
-                  }
-              }
-              
-              DropboxClientsManager.handleRedirectURL(context.url, includeBackgroundClient: false, completion: oauthCompletion)
-          }
-      }
+   
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

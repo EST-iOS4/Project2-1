@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		A68262392E694E2B003F6B05 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A68262382E694E2B003F6B05 /* SnapKit */; };
-		A682623F2E695133003F6B05 /* SwiftyDropbox in Frameworks */ = {isa = PBXBuildFile; productRef = A682623E2E695133003F6B05 /* SwiftyDropbox */; };
-		A68262412E695133003F6B05 /* SwiftyDropboxObjC in Frameworks */ = {isa = PBXBuildFile; productRef = A68262402E695133003F6B05 /* SwiftyDropboxObjC */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,8 +41,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A68262392E694E2B003F6B05 /* SnapKit in Frameworks */,
-				A682623F2E695133003F6B05 /* SwiftyDropbox in Frameworks */,
-				A68262412E695133003F6B05 /* SwiftyDropboxObjC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,8 +84,6 @@
 			name = "Project2-1";
 			packageProductDependencies = (
 				A68262382E694E2B003F6B05 /* SnapKit */,
-				A682623E2E695133003F6B05 /* SwiftyDropbox */,
-				A68262402E695133003F6B05 /* SwiftyDropboxObjC */,
 			);
 			productName = "Project2-1";
 			productReference = A682620A2E692E7F003F6B05 /* Project2-1.app */;
@@ -121,7 +115,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				A68262372E694E2B003F6B05 /* XCRemoteSwiftPackageReference "SnapKit" */,
-				A682623D2E695133003F6B05 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A682620B2E692E7F003F6B05 /* Products */;
@@ -367,14 +360,6 @@
 				minimumVersion = 5.7.1;
 			};
 		};
-		A682623D2E695133003F6B05 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/dropbox/SwiftyDropbox";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 10.2.1;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -382,16 +367,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A68262372E694E2B003F6B05 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
-		};
-		A682623E2E695133003F6B05 /* SwiftyDropbox */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A682623D2E695133003F6B05 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */;
-			productName = SwiftyDropbox;
-		};
-		A68262402E695133003F6B05 /* SwiftyDropboxObjC */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A682623D2E695133003F6B05 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */;
-			productName = SwiftyDropboxObjC;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
