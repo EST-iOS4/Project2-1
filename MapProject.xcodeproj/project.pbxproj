@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8B16DEB32E7005090069AB72 /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = 8B16DEB22E7005090069AB72 /* NMapsMap */; };
 		8B8A64092E6FC74600751B9A /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = 8B8A64082E6FC74600751B9A /* NMapsMap */; };
+		CB34A5482E71445000AA94FE /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = CB34A5472E71445000AA94FE /* NMapsMap */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8B8A64092E6FC74600751B9A /* NMapsMap in Frameworks */,
+				CB34A5482E71445000AA94FE /* NMapsMap in Frameworks */,
 				8B16DEB32E7005090069AB72 /* NMapsMap in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,6 +89,7 @@
 			packageProductDependencies = (
 				8B8A64082E6FC74600751B9A /* NMapsMap */,
 				8B16DEB22E7005090069AB72 /* NMapsMap */,
+				CB34A5472E71445000AA94FE /* NMapsMap */,
 			);
 			productName = MapProject;
 			productReference = 8B2985C22E6FC1E200728652 /* MapProject.app */;
@@ -117,7 +120,7 @@
 			mainGroup = 8B2985B92E6FC1E200728652;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				8B16DEB12E7005090069AB72 /* XCLocalSwiftPackageReference "../../packages/SPM-NMapsMap" */,
+				CB34A5462E71445000AA94FE /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8B2985C32E6FC1E200728652 /* Products */;
@@ -350,12 +353,16 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		8B16DEB12E7005090069AB72 /* XCLocalSwiftPackageReference "../../packages/SPM-NMapsMap" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../packages/SPM-NMapsMap";
+/* Begin XCRemoteSwiftPackageReference section */
+		CB34A5462E71445000AA94FE /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/navermaps/SPM-NMapsMap";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.22.1;
+			};
 		};
-/* End XCLocalSwiftPackageReference section */
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		8B16DEB22E7005090069AB72 /* NMapsMap */ = {
@@ -364,6 +371,11 @@
 		};
 		8B8A64082E6FC74600751B9A /* NMapsMap */ = {
 			isa = XCSwiftPackageProductDependency;
+			productName = NMapsMap;
+		};
+		CB34A5472E71445000AA94FE /* NMapsMap */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CB34A5462E71445000AA94FE /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
 			productName = NMapsMap;
 		};
 /* End XCSwiftPackageProductDependency section */
