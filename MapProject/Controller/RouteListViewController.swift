@@ -126,14 +126,6 @@ extension RouteListViewController: UITableViewDataSource, UITableViewDelegate {
     cell.contentConfiguration = content
     
     return cell
-    
-  }
-  
-  func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-    if editingStyle == .delete {
-      places.remove(at: indexPath.row)
-      tableView.deleteRows(at: [indexPath], with: .fade)
-    }
   }
   
   func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
@@ -143,5 +135,17 @@ extension RouteListViewController: UITableViewDataSource, UITableViewDelegate {
   func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
     let movedPlace = places.remove(at: sourceIndexPath.row)
     places.insert(movedPlace, at: destinationIndexPath.row)
+  }
+  
+  func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    guard tableView.isEditing else {
+      return nil
+    }
+    let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] (_, _, completion) in
+      self?.places.remove(at: indexPath.row)
+      tableView.deleteRows(at: [indexPath], with: .fade)
+      completion(true)
+    }
+    return UISwipeActionsConfiguration(actions: [deleteAction])
   }
 }

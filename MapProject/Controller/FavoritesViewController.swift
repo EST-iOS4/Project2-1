@@ -85,13 +85,6 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
     return cell
   }
   
-  func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-    if editingStyle == .delete {
-      favoriteRoutes.remove(at: indexPath.row)
-      tableView.deleteRows(at: [indexPath], with: .fade)
-    }
-  }
-  
   func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
     return true
   }
@@ -110,5 +103,17 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
     
     // TODO: 이 경로 데이터를 경로 설정 화면으로 전달하고 화면을 전환하는 코드를 추가합니다.
     // self.tabBarController?.selectedIndex = 1 // 경로 탭(두 번째)으로 이동
+  }
+  
+  func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    guard tableView.isEditing else {
+      return nil
+    }
+    let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] (_, _, completion) in
+      self?.favoriteRoutes.remove(at: indexPath.row)
+      tableView.deleteRows(at: [indexPath], with: .fade)
+      completion(true)
+    }
+    return UISwipeActionsConfiguration(actions: [deleteAction])
   }
 }
