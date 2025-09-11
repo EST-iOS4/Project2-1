@@ -7,7 +7,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
   private let naverMapView = NMFNaverMapView(frame: .zero)
   private var currentCoordinate: NMGLatLng?
   
-  // MARK: - 수정 1
   private let addButton: UIButton = {
     let button = UIButton()
     let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
@@ -28,25 +27,20 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    // 지도 추가
     naverMapView.frame = view.bounds
     naverMapView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     view.addSubview(naverMapView)
     
-    // 내 위치 버튼
     naverMapView.showLocationButton = true
     naverMapView.mapView.locationOverlay.hidden = false
     
-    // 위치 권한 및 시작
     locationManager.delegate = self
     locationManager.requestWhenInUseAuthorization()
     locationManager.startUpdatingLocation()
     
-    // MARK: - 수정 2
     setupAddButton()
   }
   
-  // MARK: - 수정 3
   private func setupAddButton() {
     view.addSubview(addButton)
     
@@ -61,9 +55,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     ])
   }
   
-  // MARK: - 수정 4
   @objc private func addButtonTapped() {
     print("플러스 버튼이 눌렸습니다.")
+    
+    let routeListVC = RouteListViewController()
+    let navigationController = UINavigationController(rootViewController: routeListVC)
+    
+    present(navigationController, animated: true, completion: nil)
   }
   
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
