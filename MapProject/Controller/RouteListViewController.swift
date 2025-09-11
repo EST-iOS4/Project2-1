@@ -17,6 +17,17 @@ class RouteListViewController: UIViewController {
     return tableView
   }()
   
+  private lazy var resetButton: UIBarButtonItem = {
+    let button = UIBarButtonItem(image: UIImage(systemName: "trash"),
+                                 style: .plain,
+                                 target: self,
+                                 action: #selector(resetButtonTapped))
+    button.tintColor = .red // 경고의 의미로 빨간색으로 설정
+    return button
+  }()
+  
+  private var favoritesButton: UIBarButtonItem?
+  
   // MARK: - Lifecycle
   
   override func viewDidLoad() {
@@ -36,8 +47,13 @@ class RouteListViewController: UIViewController {
   
   override func setEditing(_ editing: Bool, animated: Bool) {
       super.setEditing(editing, animated: animated)
-      
       tableView.setEditing(editing, animated: animated)
+    
+        if editing {
+            navigationItem.leftBarButtonItem = self.resetButton
+        } else {
+          navigationItem.leftBarButtonItem = self.favoritesButton
+        }
   }
   
   // MARK: - Actions
@@ -65,6 +81,22 @@ class RouteListViewController: UIViewController {
     alertController.addAction(cancelAction)
     
     present(alertController, animated: true, completion: nil)
+  }
+  
+  @objc private func resetButtonTapped() {
+      let alertController = UIAlertController(title: "경로 초기화",
+                                              message: "정말로 모든 경로를 삭제하시겠습니까?",
+                                              preferredStyle: .alert)
+      let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
+          self?.places.removeAll()
+          self?.tableView.reloadData()
+      }
+      let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+      
+      alertController.addAction(deleteAction)
+      alertController.addAction(cancelAction)
+      
+      present(alertController, animated: true)
   }
   
   // MARK: - Helper Methods
