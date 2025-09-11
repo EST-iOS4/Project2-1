@@ -58,10 +58,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
   @objc private func addButtonTapped() {
     print("플러스 버튼이 눌렸습니다.")
     
-    let routeListVC = RouteListViewController()
-    let navigationController = UINavigationController(rootViewController: routeListVC)
-    
-    present(navigationController, animated: true, completion: nil)
+    self.tabBarController?.selectedIndex = 1
   }
   
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

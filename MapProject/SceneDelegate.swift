@@ -1,10 +1,3 @@
-//
-//  SceneDelegate.swift
-//  MapProject
-//
-//  Created by 강지원 on 9/9/25.
-//
-
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -12,12 +5,39 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
 
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
-    }
+  func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    guard let windowScene = (scene as? UIWindowScene) else { return }
+    
+    let window = UIWindow(windowScene: windowScene)
+    
+    let tabBarController = UITabBarController()
+    
+    let mainVC = ViewController()
+    let routeListVC = RouteListViewController()
+    let favoritesVC = FavoritesViewController()
+    
+    mainVC.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map.fill"), tag: 0)
+    routeListVC.tabBarItem = UITabBarItem(title: "경로", image: UIImage(systemName: "list.bullet"), tag: 1)
+    favoritesVC.tabBarItem = UITabBarItem(title: "즐겨찾기", image: UIImage(systemName: "star.fill"), tag: 2)
+    
+    let nav1 = UINavigationController(rootViewController: mainVC)
+    let nav2 = UINavigationController(rootViewController: routeListVC)
+    let nav3 = UINavigationController(rootViewController: favoritesVC)
+    
+    tabBarController.setViewControllers([nav1, nav2, nav3], animated: false)
+    
+    let tabBarAppearance = UITabBarAppearance()
+    
+    tabBarAppearance.configureWithOpaqueBackground()
+    tabBarAppearance.backgroundColor = .systemBackground
+    
+    tabBarController.tabBar.standardAppearance = tabBarAppearance
+    tabBarController.tabBar.scrollEdgeAppearance = tabBarAppearance
+    
+    window.rootViewController = tabBarController
+    window.makeKeyAndVisible()
+    self.window = window
+  }
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
