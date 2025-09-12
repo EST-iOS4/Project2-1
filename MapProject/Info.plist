@@ -2,9 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>NaverClientID</key>
+    <string>fR2clirgD61QCGU39jGZ</string>
+    <key>NaverClientSecret</key>
+    <string>GzVKSW26pj</string>
+
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>내 위치를 지도에 표시하기 위해 사용합니다.</string>
-
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
     <key>UIApplicationSceneManifest</key>
     <dict>
         <key>UIApplicationSupportsMultipleScenes</key>
