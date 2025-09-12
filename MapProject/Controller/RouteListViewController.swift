@@ -36,24 +36,28 @@ class RouteListViewController: UIViewController {
     setupUI()
     setupTableView()
     
-    let favoritesButton = UIBarButtonItem(image: UIImage(systemName: "star"),
+    self.favoritesButton = UIBarButtonItem(image: UIImage(systemName: "star"),
                                           style: .plain,
                                           target: self,
                                           action: #selector(favoritesButtonTapped))
     
-    navigationItem.leftBarButtonItem = favoritesButton
+    if let favButton = self.favoritesButton {
+      navigationItem.setLeftBarButtonItems([favButton], animated: false)
+    }
     navigationItem.rightBarButtonItem = editButtonItem
   }
   
   override func setEditing(_ editing: Bool, animated: Bool) {
-      super.setEditing(editing, animated: animated)
-      tableView.setEditing(editing, animated: animated)
+    super.setEditing(editing, animated: animated)
+    tableView.setEditing(editing, animated: animated)
     
-        if editing {
-            navigationItem.leftBarButtonItem = self.resetButton
-        } else {
-          navigationItem.leftBarButtonItem = self.favoritesButton
-        }
+    if editing {
+      navigationItem.setLeftBarButtonItems([self.resetButton], animated: animated)
+    } else {
+      if let favButton = self.favoritesButton {
+        navigationItem.setLeftBarButtonItems([favButton], animated: animated)
+      }
+    }
   }
   
   // MARK: - Actions
