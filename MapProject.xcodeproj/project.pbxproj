@@ -16,22 +16,9 @@
 		8B2985C22E6FC1E200728652 /* MapProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MapProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		8B2985D42E6FC1E200728652 /* Exceptions for "MapProject" folder in "MapProject" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 8B2985C12E6FC1E200728652 /* MapProject */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8B2985C42E6FC1E200728652 /* MapProject */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				8B2985D42E6FC1E200728652 /* Exceptions for "MapProject" folder in "MapProject" target */,
-			);
 			path = MapProject;
 			sourceTree = "<group>";
 		};
