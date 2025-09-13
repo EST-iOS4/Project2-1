@@ -52,8 +52,11 @@ class RouteListViewController: UIViewController {
     }
 
     @objc private func handleRouteListUpdate() {
-        tableView.reloadData()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
+
 
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
@@ -97,17 +100,22 @@ class RouteListViewController: UIViewController {
         let alertController = UIAlertController(title: "경로 초기화",
                                                 message: "정말로 모든 경로를 삭제하시겠습니까?",
                                                 preferredStyle: .alert)
-        
+
         let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
             RouteListManager.shared.clear()
-            self.tableView.reloadData()
+
+            // ✅ 직접 테이블 뷰 리로드 (안전하게 메인 큐에서)
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         }
-        
+
         alertController.addAction(deleteAction)
         alertController.addAction(UIAlertAction(title: "취소", style: .cancel))
-        
+
         present(alertController, animated: true)
     }
+
     
     private func saveRoute(withName name: String) {
         let favoriteRoute = FavoriteRoute(name: name, favorites: places)
