@@ -100,11 +100,11 @@ class SearchView: UIViewController, UISearchResultsUpdating, UITableViewDataSour
             // 버튼 액션 정의
             cell.actionButton.setTitle("추가", for: .normal) // 또는 상황에 따라 "삭제"
             cell.onButtonTap = { [weak self] in
-                guard let self = self else { return }
+                guard self != nil else { return }
                 print("➕ 버튼 눌림: \(place.title)")
-                // TODO: 추가 또는 삭제 동작 수행
+                
+                RouteListManager.shared.add(place)
             }
-            
             return cell
         }
     }

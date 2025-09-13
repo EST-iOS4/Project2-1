@@ -5,17 +5,7 @@ class FavoritesViewController: UIViewController {
     // MARK: - Properties
     
     // 테스트를 위한 임시 즐겨찾기 데이터
-    var favoriteRoutes: [FavoriteRoute] = [
-        FavoriteRoute(name: "집 -> 회사", favorites: [
-            Place(name: "우리집", address: "경기도 용인시"),
-            Place(name: "판교역", address: "경기도 성남시"),
-            Place(name: "회사", address: "경기도 성남시")
-        ]),
-        FavoriteRoute(name: "주말 나들이", favorites: [
-            Place(name: "스타필드", address: "경기도 하남시"),
-            Place(name: "미사경정공원", address: "경기도 하남시")
-        ])
-    ]
+    var favoriteRoutes: [FavoriteRoute] = [    ]
     
     private let tableView: UITableView = {
         let tableView = UITableView()
@@ -77,7 +67,7 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
     var content = cell.defaultContentConfiguration()
     
     content.text = route.name
-    content.secondaryText = route.favorites.map { $0.name }.joined(separator: " → ")
+    content.secondaryText = route.favorites.map { $0.title}.joined(separator: " → ")
     
     cell.contentConfiguration = content
     cell.selectionStyle = tableView.isEditing ? .none : .default
