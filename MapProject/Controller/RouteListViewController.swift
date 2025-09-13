@@ -1,9 +1,16 @@
 import UIKit
 import Foundation
 
+// MARK: - Delegate 정의
+protocol RouteListViewControllerDelegate: AnyObject {
+    func routeListViewController(_ controller: RouteListViewController, didSaveFavoriteRoute route: FavoriteRoute)
+}
+
 class RouteListViewController: UIViewController {
     
     // MARK: - Properties
+    
+    weak var delegate: RouteListViewControllerDelegate? // ✅ delegate 선언
     
     private var places: [PlaceModel] {
         return RouteListManager.shared.selectedPlaces
@@ -38,19 +45,16 @@ class RouteListViewController: UIViewController {
         }
         navigationItem.rightBarButtonItem = editButtonItem
 
-        // 🔥 등록
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(handleRouteListUpdate),
                                                name: .routeListDidUpdate,
                                                object: nil)
     }
 
-    
     @objc private func handleRouteListUpdate() {
         tableView.reloadData()
     }
 
-    
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         tableView.setEditing(editing, animated: animated)
@@ -75,7 +79,8 @@ class RouteListViewController: UIViewController {
         }
         
         let saveAction = UIAlertAction(title: "저장", style: .default) { _ in
-            guard let routeName = alertController.textFields?.first?.text, !routeName.isEmpty else {
+            guard let routeName = alertController.textFields?.first?.text,
+                  !routeName.isEmpty else {
                 print("경로 이름이 입력되지 않았습니다.")
                 return
             }
@@ -105,11 +110,9 @@ class RouteListViewController: UIViewController {
     }
     
     private func saveRoute(withName name: String) {
-        print("--- 즐겨찾기 저장 ---")
-        print("경로 이름: \(name)")
-        let placeNames = places.map { $0.title }.joined(separator: " -> ")
-        print("경로 목록: \(placeNames)")
-        print("--------------------")
+        let favoriteRoute = FavoriteRoute(name: name, favorites: places)
+        delegate?.routeListViewController(self, didSaveFavoriteRoute: favoriteRoute) // ✅ delegate 호출
+        print("✅ 즐겨찾기 '\(name)' 저장됨.")
     }
     
     // MARK: - Setup
@@ -118,7 +121,7 @@ class RouteListViewController: UIViewController {
         view.backgroundColor = .systemBackground
         title = "경로 설정"
         
-        tableView.translatesAutoresizingMaskIntoConstraints = false // 🔥 이거 추가!
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(tableView)
         
         NSLayoutConstraint.activate([
@@ -129,7 +132,6 @@ class RouteListViewController: UIViewController {
         ])
     }
     
-    
     private func setupTableView() {
         tableView.dataSource = self
         tableView.delegate = self
@@ -137,11 +139,12 @@ class RouteListViewController: UIViewController {
     }
 }
 
-// MARK: - UITableView DataSource & Delegate
+// MARK: - Notification 이름
 extension Notification.Name {
     static let routeListDidUpdate = Notification.Name("routeListDidUpdate")
 }
 
+// MARK: - TableView DataSource & Delegate
 extension RouteListViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

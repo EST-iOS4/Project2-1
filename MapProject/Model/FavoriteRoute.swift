@@ -1,6 +1,6 @@
 import Foundation
 
-struct FavoriteRoute {
+struct FavoriteRoute: Codable {
     let name: String
     let favorites: [PlaceModel]
 }

@@ -1,6 +1,6 @@
 import Foundation
 
-struct PlaceModel: Decodable, Equatable {
+struct PlaceModel: Codable, Equatable {
     let title: String
     let link: String
     let category: String
