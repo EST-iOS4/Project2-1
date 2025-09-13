@@ -20,7 +20,7 @@ class NaverLocalAPI {
         Bundle.main.object(forInfoDictionaryKey: "NaverClientSecret") as? String ?? ""
     }
 
-    func search(keyword: String, completion: @escaping ([PlaceModel]) -> Void) {
+    func search(keyword: String, completion: @escaping ([Place]) -> Void) {
         guard let encoded = keyword.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "https://openapi.naver.com/v1/search/local.json?query=\(encoded)&display=10&start=1&sort=random") else {
             completion([])
@@ -66,5 +66,5 @@ class NaverLocalAPI {
 }
 
 struct NaverSearchResponse: Decodable {
-    let items: [PlaceModel]
+    let items: [Place]
 }

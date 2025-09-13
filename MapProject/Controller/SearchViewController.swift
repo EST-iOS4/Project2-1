@@ -5,7 +5,7 @@ class SearchView: UIViewController, UISearchResultsUpdating, UITableViewDataSour
     private let tableView = UITableView()
     private let searchController = UISearchController(searchResultsController: nil)
     
-    private var searchResults: [PlaceModel] = []
+    private var searchResults: [Place] = []
     private var searchHistory: [String] = []
     private var showingHistory = true
 

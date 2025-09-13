@@ -1,11 +1,6 @@
 import Foundation
 
-struct Place {
-    let name: String
-    let address: String
-}
-
-struct PlaceModel: Decodable {
+struct Place: Decodable {
     let title: String
     let link: String
     let category: String
