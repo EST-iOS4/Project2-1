@@ -2,11 +2,7 @@ import UIKit
 import CoreLocation
 import NMapsMap
 
-class ViewController: UIViewController, CLLocationManagerDelegate, UISearchBarDelegate {
-    
-    private let locationManager = CLLocationManager()
-    private let naverMapView = NMFNaverMapView(frame: .zero)
-    private var currentCoordinate: NMGLatLng?
+class ViewController: UIViewController, CLLocationManagerDelegate {
     
     private let searchButton: UIButton = {
         let button = UIButton(type: .system)
@@ -20,34 +16,26 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UISearchBarDe
         return button
     }()
 
-
+    
+    private let locationManager = CLLocationManager()
+    private let naverMapView = NMFNaverMapView(frame: .zero)
+    private var currentCoordinate: NMGLatLng?
+    
+    private var markers: [NMFMarker] = []
+    private var polyline: NMFPolylineOverlay?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupMap()
         setupLocation()
         setupSearchButton()
     }
-
-    // MARK: - 지도 설정
-    private func setupMap() {
-        naverMapView.frame = view.bounds
-        naverMapView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        view.addSubview(naverMapView)
-
-        naverMapView.showLocationButton = true
-        naverMapView.mapView.locationOverlay.hidden = false
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        drawPolylineRoute()
     }
-
-    // MARK: - 위치 권한
-    private func setupLocation() {
-        locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.startUpdatingLocation()
-    }
-
-    // MARK: - 검색창 설정
+    
     private func setupSearchButton() {
         view.addSubview(searchButton)
 
@@ -60,14 +48,28 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UISearchBarDe
 
         searchButton.addTarget(self, action: #selector(didTapSearch), for: .touchUpInside)
     }
-
-    // MARK: - 검색창 클릭 시 검색 화면으로 이동
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+    
+    @objc private func didTapSearch() {
         let searchVC = SearchView()
         navigationController?.pushViewController(searchVC, animated: true)
     }
 
-    // MARK: - CLLocationManagerDelegate
+
+    
+    private func setupMap() {
+        naverMapView.frame = view.bounds
+        naverMapView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.addSubview(naverMapView)
+        naverMapView.showLocationButton = true
+        naverMapView.mapView.locationOverlay.hidden = false
+    }
+    
+    private func setupLocation() {
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+    }
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let last = locations.last else { return }
         let coord = NMGLatLng(lat: last.coordinate.latitude, lng: last.coordinate.longitude)
@@ -75,8 +77,55 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UISearchBarDe
         naverMapView.mapView.locationOverlay.location = coord
     }
     
-    @objc func didTapSearch() {
-        let serchVC = SearchView()
-        navigationController?.pushViewController(serchVC, animated: true)
+    private func drawPolylineRoute() {
+        // 기존 마커 및 선 제거
+        markers.forEach { $0.mapView = nil }
+        markers.removeAll()
+        polyline?.mapView = nil
+        polyline = nil
+        
+        let places = RouteListManager.shared.selectedPlaces
+        let coords: [NMGLatLng] = RouteListManager.shared.selectedPlaces.compactMap {
+            guard let mapx = Double($0.mapx),
+                  let mapy = Double($0.mapy) else {
+                print("❌ 변환 실패: mapx=\($0.mapx), mapy=\($0.mapy)")
+                return nil
+            }
+
+            // ✅ 수정된 나누기 값: 10_000_000.0
+            let lat = mapy / 10_000_000.0
+            let lng = mapx / 10_000_000.0
+            print("📍 변환된 좌표: lat=\(lat), lng=\(lng)")
+            return NMGLatLng(lat: lat, lng: lng)
+        }
+
+
+
+        
+        guard !coords.isEmpty else { return }
+        
+        // 마커 추가
+        for (index, coord) in coords.enumerated() {
+            let marker = NMFMarker(position: coord)
+            marker.captionText = "\(index + 1)"
+            marker.mapView = naverMapView.mapView
+            markers.append(marker)
+        }
+        
+        // 선 추가 (✅ NMFPath 사용)
+        let lineString = NMGLineString(points: coords as [AnyObject])
+        let routeLine = NMFPath()
+        routeLine.path = lineString
+        routeLine.color = UIColor.systemBlue
+        routeLine.width = 6
+        routeLine.mapView = naverMapView.mapView
+        // polyline은 이제 필요 없지만 유지하고 싶다면 아래처럼 캐스팅해도 OK
+        // polyline = routeLine as? NMFPolylineOverlay
+        
+        // 카메라 이동
+        let cameraUpdate = NMFCameraUpdate(scrollTo: coords[0])
+        cameraUpdate.animation = .easeIn
+        naverMapView.mapView.moveCamera(cameraUpdate)
     }
+
 }
