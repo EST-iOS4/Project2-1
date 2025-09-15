@@ -1,7 +1,7 @@
 import UIKit
 
 class FavoritesViewController: UIViewController {
-    
+
     // MARK: - Properties
     
     private let favoritesKey = "savedFavoriteRoutes"
@@ -14,6 +14,12 @@ class FavoritesViewController: UIViewController {
     tableView.register(UITableViewCell.self, forCellReuseIdentifier: "favoriteCell")
     return tableView
   }()
+  
+  private let searchController = UISearchController(searchResultsController: nil)
+  private var filteredRoutes: [FavoriteRoute] = []
+  private var isSearching: Bool {
+    return searchController.isActive && !searchController.searchBar.text!.isEmpty
+  }
     
     // MARK: - Lifecycle
     
@@ -22,6 +28,7 @@ class FavoritesViewController: UIViewController {
     
     setupUI()
     setupTableView()
+    setupSearchController()
     loadFavoritesFromUserDefaults()
     
     navigationItem.rightBarButtonItem = editButtonItem
@@ -64,6 +71,15 @@ class FavoritesViewController: UIViewController {
   private func setupTableView() {
     tableView.dataSource = self
     tableView.delegate = self
+  }
+  
+  private func setupSearchController() {
+    searchController.searchResultsUpdater = self
+    // 검색 시 배경이 어두워지는 효과를 비활성화 (선택 사항)
+    searchController.obscuresBackgroundDuringPresentation = false
+    searchController.searchBar.placeholder = "즐겨찾기 검색"
+    navigationItem.searchController = searchController
+    navigationItem.hidesSearchBarWhenScrolling = false
   }
     
     // MARK: - UserDefaults 저장/불러오기
@@ -124,12 +140,12 @@ extension FavoritesViewController: RouteListViewControllerDelegate {
 extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
   
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return favoriteRoutes.count
+    return isSearching ? filteredRoutes.count : favoriteRoutes.count
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "favoriteCell", for: indexPath)
-    let route = favoriteRoutes[indexPath.row]
+    let route = isSearching ? filteredRoutes[indexPath.row] : favoriteRoutes[indexPath.row]
     
     var content = cell.defaultContentConfiguration()
     content.text = route.name
@@ -151,6 +167,7 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
   }
   
   func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+    guard !isSearching else { return }
     let movedRoute = favoriteRoutes.remove(at: sourceIndexPath.row)
     favoriteRoutes.insert(movedRoute, at: destinationIndexPath.row)
     saveFavoritesToUserDefaults()
@@ -159,8 +176,8 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     tableView.deselectRow(at: indexPath, animated: true)
     
-    let selectedRoute = favoriteRoutes[indexPath.row]
-    print("'\(selectedRoute.name)' 경로가 선택되었습니다.")
+    let selectedRoute = isSearching ? filteredRoutes[indexPath.row] : favoriteRoutes[indexPath.row]
+        print("'\(selectedRoute.name)' 경로가 선택되었습니다.")
     
     RouteListManager.shared.setPlaces(selectedRoute.favorites)
     self.tabBarController?.selectedIndex = 1
@@ -170,11 +187,40 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
     guard tableView.isEditing else { return nil }
     
     let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] (_, _, completion) in
-      self?.favoriteRoutes.remove(at: indexPath.row)
-      tableView.deleteRows(at: [indexPath], with: .fade)
-      self?.saveFavoritesToUserDefaults()
+      guard let self = self else {
+        completion(false)
+        return
+      }
+      
+      let routeToRemove = self.isSearching ? self.filteredRoutes[indexPath.row] : self.favoriteRoutes[indexPath.row]
+      
+      if let indexInOriginalArray = self.favoriteRoutes.firstIndex(where: { $0.name == routeToRemove.name && $0.favorites == routeToRemove.favorites }) {
+        self.favoriteRoutes.remove(at: indexInOriginalArray)
+      }
+      
+      self.tableView.deleteRows(at: [indexPath], with: .fade)
+      self.saveFavoritesToUserDefaults()
       completion(true)
     }
     return UISwipeActionsConfiguration(actions: [deleteAction])
+  }
+}
+
+// MARK: - UISearchResultsUpdating
+
+extension FavoritesViewController: UISearchResultsUpdating {
+  
+  func updateSearchResults(for searchController: UISearchController) {
+    guard let searchText = searchController.searchBar.text?.trimmingCharacters(in: .whitespaces), !searchText.isEmpty else {
+      filteredRoutes.removeAll()
+      tableView.reloadData()
+      return
+    }
+    
+    self.filteredRoutes = self.favoriteRoutes.filter { route in
+      return route.name.lowercased().contains(searchText.lowercased())
+    }
+    
+    self.tableView.reloadData()
   }
 }
