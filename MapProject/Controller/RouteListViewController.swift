@@ -104,9 +104,11 @@ class RouteListViewController: UIViewController {
         let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
             RouteListManager.shared.clear()
 
-            // ✅ 직접 테이블 뷰 리로드 (안전하게 메인 큐에서)
             DispatchQueue.main.async {
                 self.tableView.reloadData()
+              
+              self.setEditing(false, animated: true)
+              self.tabBarController?.selectedIndex = 0
             }
         }
 
@@ -119,8 +121,14 @@ class RouteListViewController: UIViewController {
     
     private func saveRoute(withName name: String) {
         let favoriteRoute = FavoriteRoute(name: name, favorites: places)
-        delegate?.routeListViewController(self, didSaveFavoriteRoute: favoriteRoute) // ✅ delegate 호출
+        delegate?.routeListViewController(self, didSaveFavoriteRoute: favoriteRoute)
         print("✅ 즐겨찾기 '\(name)' 저장됨.")
+      
+      RouteListManager.shared.clear()
+      DispatchQueue.main.async {
+              self.tableView.reloadData()
+          }
+      self.tabBarController?.selectedIndex = 2
     }
     
     // MARK: - Setup
