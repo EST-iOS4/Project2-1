@@ -106,9 +106,9 @@ class RouteListViewController: UIViewController {
       
       DispatchQueue.main.async {
         self.tableView.reloadData()
-        
         self.setEditing(false, animated: true)
         self.tabBarController?.selectedIndex = 0
+        self.navigationItem.title = "경로 설정"
       }
     }
     
@@ -127,6 +127,7 @@ class RouteListViewController: UIViewController {
     RouteListManager.shared.clear()
     DispatchQueue.main.async {
       self.tableView.reloadData()
+      self.navigationItem.title = "경로 설정"
     }
     self.tabBarController?.selectedIndex = 2
   }

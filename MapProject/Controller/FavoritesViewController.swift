@@ -177,9 +177,14 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
     tableView.deselectRow(at: indexPath, animated: true)
     
     let selectedRoute = isSearching ? filteredRoutes[indexPath.row] : favoriteRoutes[indexPath.row]
-        print("'\(selectedRoute.name)' 경로가 선택되었습니다.")
+    print("'\(selectedRoute.name)' 경로가 선택되었습니다.")
     
     RouteListManager.shared.setPlaces(selectedRoute.favorites)
+    if let tabBarVCs = self.tabBarController?.viewControllers,
+       let navController = tabBarVCs[1] as? UINavigationController,
+       let routeListVC = navController.viewControllers.first as? RouteListViewController {
+      routeListVC.navigationItem.title = selectedRoute.name
+    }
     self.tabBarController?.selectedIndex = 1
   }
   
