@@ -1,7 +1,7 @@
 import Foundation
 
 struct FavoriteRoute: Codable, Equatable {
-    let name: String
+    var name: String
     let favorites: [PlaceModel]
   
   static func == (lhs: FavoriteRoute, rhs: FavoriteRoute) -> Bool {

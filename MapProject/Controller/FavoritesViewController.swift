@@ -39,7 +39,6 @@ class FavoritesViewController: UIViewController {
     print("📌 FavoritesViewController 화면 표시됨")
     print("🔢 즐겨찾기 개수: \(favoriteRoutes.count)")
   }
-
     
   override func setEditing(_ editing: Bool, animated: Bool) {
     super.setEditing(editing, animated: animated)
@@ -71,11 +70,11 @@ class FavoritesViewController: UIViewController {
   private func setupTableView() {
     tableView.dataSource = self
     tableView.delegate = self
+    tableView.allowsSelectionDuringEditing = true
   }
   
   private func setupSearchController() {
     searchController.searchResultsUpdater = self
-    // 검색 시 배경이 어두워지는 효과를 비활성화 (선택 사항)
     searchController.obscuresBackgroundDuringPresentation = false
     searchController.searchBar.placeholder = "즐겨찾기 검색"
     navigationItem.searchController = searchController
@@ -105,7 +104,7 @@ class FavoritesViewController: UIViewController {
       print("❌ 즐겨찾기 불러오기 실패: \(error.localizedDescription)")
     }
   }
-    
+
     // MARK: - Helper
   
   func addFavoriteRoute(_ route: FavoriteRoute) {
@@ -172,20 +171,60 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
     favoriteRoutes.insert(movedRoute, at: destinationIndexPath.row)
     saveFavoritesToUserDefaults()
   }
-  
+
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     tableView.deselectRow(at: indexPath, animated: true)
     
-    let selectedRoute = isSearching ? filteredRoutes[indexPath.row] : favoriteRoutes[indexPath.row]
-    print("'\(selectedRoute.name)' 경로가 선택되었습니다.")
-    
-    RouteListManager.shared.setPlaces(selectedRoute.favorites)
-    if let tabBarVCs = self.tabBarController?.viewControllers,
-       let navController = tabBarVCs[1] as? UINavigationController,
-       let routeListVC = navController.viewControllers.first as? RouteListViewController {
-      routeListVC.navigationItem.title = selectedRoute.name
+    if tableView.isEditing {
+      
+      let routeToRename = isSearching ? filteredRoutes[indexPath.row] : favoriteRoutes[indexPath.row]
+      
+      let alertController = UIAlertController(title: "이름 변경",
+                                              message: "새로운 경로 이름을 입력하세요.",
+                                              preferredStyle: .alert)
+      
+      alertController.addTextField { textField in
+        textField.placeholder = "경로 이름"
+        textField.text = routeToRename.name
+      }
+      
+      let saveAction = UIAlertAction(title: "저장", style: .default) { [weak self] _ in
+        guard let self = self,
+              let newName = alertController.textFields?.first?.text, !newName.isEmpty else { return }
+        
+        if let indexInOriginal = self.favoriteRoutes.firstIndex(where: { $0.name == routeToRename.name && $0.favorites == routeToRename.favorites }) {
+          self.favoriteRoutes[indexInOriginal].name = newName
+        }
+        
+        if self.isSearching, let indexInFiltered = self.filteredRoutes.firstIndex(where: { $0.name == routeToRename.name && $0.favorites == routeToRename.favorites }) {
+          self.filteredRoutes[indexInFiltered].name = newName
+        }
+        
+        self.tableView.reloadRows(at: [indexPath], with: .automatic)
+        self.saveFavoritesToUserDefaults()
+      }
+      
+      let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+      
+      alertController.addAction(saveAction)
+      alertController.addAction(cancelAction)
+      
+      self.present(alertController, animated: true)
+      
+    } else {
+      
+      let selectedRoute = isSearching ? filteredRoutes[indexPath.row] : favoriteRoutes[indexPath.row]
+      
+      RouteListManager.shared.setPlaces(selectedRoute.favorites)
+      
+      if let tabBarVCs = self.tabBarController?.viewControllers,
+         let navController = tabBarVCs[1] as? UINavigationController,
+         let routeListVC = navController.viewControllers.first as? RouteListViewController {
+        routeListVC.navigationItem.title = selectedRoute.name
+      }
+      
+      self.tabBarController?.selectedIndex = 1
     }
-    self.tabBarController?.selectedIndex = 1
   }
   
   func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
