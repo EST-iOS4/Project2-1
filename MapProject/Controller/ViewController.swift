@@ -52,7 +52,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     let searchVC = SearchViewController()
     navigationController?.pushViewController(searchVC, animated: true)
   }
-
+  
   private func setupMap() {
     naverMapView.frame = view.bounds
     naverMapView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -63,8 +63,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
   
   private func setupLocation() {
     locationManager.delegate = self
+    locationManager.desiredAccuracy = kCLLocationAccuracyBest
     locationManager.requestWhenInUseAuthorization()
-    locationManager.startUpdatingLocation()
+    
+    DispatchQueue.global().async {
+      if CLLocationManager.locationServicesEnabled() {
+        print("📍 위치 서비스 켜짐")
+        self.locationManager.startUpdatingLocation()
+      } else {
+        print("❌ 위치 서비스 꺼짐")
+      }
+    }
   }
   
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -77,43 +86,47 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
   private func drawPolylineRoute() {
     markers.forEach { $0.mapView = nil }
     markers.removeAll()
-    
     routeLine?.mapView = nil
     routeLine = nil
     
-    let coords: [NMGLatLng] = RouteListManager.shared.selectedPlaces.compactMap {
-      guard let mapx = Double($0.mapx),
-            let mapy = Double($0.mapy) else {
-        print("❌ 변환 실패: mapx=\($0.mapx), mapy=\($0.mapy)")
+    let placeCoords: [NMGLatLng] = RouteListManager.shared.selectedPlaces.compactMap {
+      guard let mapx = Double($0.mapx), let mapy = Double($0.mapy) else {
         return nil
       }
+      let tmCoord = NMGTm128(x: mapx, y: mapy)
+      return tmCoord.toLatLng()
+    }
+    
+    guard placeCoords.count >= 2 else { return }
+    
+    NaverLocalAPI.shared.findDirections(coordinates: placeCoords) { [weak self] routeCoords in
+      guard let self = self, let routeCoords = routeCoords, !routeCoords.isEmpty else {
+        print("❌ 경로 탐색 결과가 없거나 실패했습니다.")
+        return
+      }
       
-      let lat = mapy / 10_000_000.0
-      let lng = mapx / 10_000_000.0
-      print("📍 변환된 좌표: lat=\(lat), lng=\(lng)")
-      return NMGLatLng(lat: lat, lng: lng)
+      DispatchQueue.main.async {
+        let lineString = NMGLineString(points: routeCoords as [AnyObject])
+        let newRouteLine = NMFPath()
+        newRouteLine.path = lineString
+        newRouteLine.color = UIColor.systemBlue
+        newRouteLine.width = 6
+        newRouteLine.mapView = self.naverMapView.mapView
+        self.routeLine = newRouteLine
+        
+        for (index, coord) in placeCoords.enumerated() {
+          let marker = NMFMarker(position: coord)
+          marker.captionText = "\(index + 1)"
+          marker.mapView = self.naverMapView.mapView
+          self.markers.append(marker)
+        }
+        
+        let bounds = NMGLatLngBounds(latLngs: placeCoords)
+        
+        let cameraUpdate = NMFCameraUpdate(fit: bounds, padding: 50)
+        cameraUpdate.animation = .easeIn
+        self.naverMapView.mapView.moveCamera(cameraUpdate)
+      }
     }
-    
-    guard !coords.isEmpty else { return }
-    
-    for (index, coord) in coords.enumerated() {
-      let marker = NMFMarker(position: coord)
-      marker.captionText = "\(index + 1)"
-      marker.mapView = naverMapView.mapView
-      markers.append(marker)
-    }
-    
-    let lineString = NMGLineString(points: coords as [AnyObject])
-    
-    let newRouteLine = NMFPath()
-       newRouteLine.path = lineString
-       newRouteLine.color = UIColor.systemBlue
-       newRouteLine.width = 6
-       newRouteLine.mapView = naverMapView.mapView
-       self.routeLine = newRouteLine
-    
-    let cameraUpdate = NMFCameraUpdate(scrollTo: coords[0])
-    cameraUpdate.animation = .easeIn
-    naverMapView.mapView.moveCamera(cameraUpdate)
   }
 }
