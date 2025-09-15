@@ -1,10 +1,3 @@
-//
-//  NaverLocalAPi.swift
-//  MapProject
-//
-//  Created by 강지원 on 9/12/25.
-//
-
 import Foundation
 
 class NaverLocalAPI {
