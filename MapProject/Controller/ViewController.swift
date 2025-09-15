@@ -49,7 +49,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
   }
   
   @objc private func didTapSearch() {
-    let searchVC = SearchView()
+    let searchVC = SearchViewController()
     navigationController?.pushViewController(searchVC, animated: true)
   }
 

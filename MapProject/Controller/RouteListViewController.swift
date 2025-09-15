@@ -57,7 +57,6 @@ class RouteListViewController: UIViewController {
     }
   }
   
-  
   override func setEditing(_ editing: Bool, animated: Bool) {
     super.setEditing(editing, animated: animated)
     tableView.setEditing(editing, animated: animated)
@@ -117,7 +116,6 @@ class RouteListViewController: UIViewController {
     
     present(alertController, animated: true)
   }
-  
   
   private func saveRoute(withName name: String) {
     let favoriteRoute = FavoriteRoute(name: name, favorites: places)
