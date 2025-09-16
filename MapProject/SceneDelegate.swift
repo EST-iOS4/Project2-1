@@ -13,7 +13,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     let tabBarController = UITabBarController()
     
-    let mainVC = ViewController()
+    let mainVC = MainViewController()
     mainVC.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map.fill"), tag: 0)
     
     let routeListVC = RouteListViewController()
