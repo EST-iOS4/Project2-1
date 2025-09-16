@@ -13,9 +13,9 @@ class MainViewController: UIViewController {
         button.layer.cornerRadius = 10
         button.titleLabel?.font = .systemFont(ofSize: 16)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(MainViewController.self, action: #selector(didTapSearch), for: .touchUpInside)
         return button
     }()
+
     
     private let locationManager = CLLocationManager() // iOS 내장 서비스 객체
     private let naverMapView = NMFNaverMapView(frame: .zero) // 네이버 지도 SDK에서 제공하는 지도 객체
@@ -28,6 +28,8 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         MapView()
         SearchButton()
+        searchButton.addTarget(self, action: #selector(didTapSearch), for: .touchUpInside)
+
         checkUserLocate()
     }
     
