@@ -99,7 +99,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         guard !coords.isEmpty else { return }
         
         for (index, coord) in coords.enumerated() {
-            let marker = NMFMarker(position: coord)
+            let marker = NMFMarker(position: coord) // 지도에 표시되는 장소 마커
             marker.captionText = "\(index + 1)"
             marker.mapView = naverMapView.mapView
             markers.append(marker)
@@ -107,7 +107,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         let lineString = NMGLineString(points: coords as [AnyObject])
         
-        let newRouteLine = NMFPath()
+        let newRouteLine = NMFPath() // 경로 설정에 추가된 경로들을 서로 연결
         newRouteLine.path = lineString
         newRouteLine.color = UIColor.systemBlue
         newRouteLine.width = 6
