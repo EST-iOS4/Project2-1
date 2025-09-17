@@ -1,9 +1,3 @@
-//
-//  RouteListmanager.swift
-//  MapProject
-//
-//  Created by 강지원 on 9/13/25.
-//
 import Foundation
 
 class RouteListManager {

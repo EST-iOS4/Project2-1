@@ -3,9 +3,10 @@
 <plist version="1.0">
 <dict>
     <key>NaverClientID</key>
-    <string>fR2clirgD61QCGU39jGZ</string>
+    <string>JpfM2StZuihM56YC0wDd</string>
+    
     <key>NaverClientSecret</key>
-    <string>GzVKSW26pj</string>
+    <string>ru2Lf5ErZA</string>
 
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>내 위치를 지도에 표시하기 위해 사용합니다.</string>

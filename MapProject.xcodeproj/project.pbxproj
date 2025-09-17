@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8BB7D1F12E7721130058B88D /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = 8BB7D1F02E7721130058B88D /* NMapsMap */; };
+		CB785BB12E77931C00A87105 /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = 8B16DEB22E7005090069AB72 /* NMapsMap */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +25,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		8B2985C22E6FC1E200728652 /* MapProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = MapProject.app; path = "/Users/algamza/Project2-1/build/Debug-iphoneos/MapProject.app"; sourceTree = "<absolute>"; };
+		CB785BB22E77931C00A87105 /* MapProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MapProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -53,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB785BB12E77931C00A87105 /* NMapsMap in Frameworks */,
 				8BB7D1F12E7721130058B88D /* NMapsMap in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -64,6 +66,7 @@
 			isa = PBXGroup;
 			children = (
 				8B2985C42E6FC1E200728652 /* MapProject */,
+				CB785BB22E77931C00A87105 /* MapProject.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -92,7 +95,7 @@
 				8BB7D1F02E7721130058B88D /* NMapsMap */,
 			);
 			productName = MapProject;
-			productReference = 8B2985C22E6FC1E200728652 /* MapProject.app */;
+			productReference = CB785BB22E77931C00A87105 /* MapProject.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */

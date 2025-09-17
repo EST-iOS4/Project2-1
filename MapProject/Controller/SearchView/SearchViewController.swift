@@ -1,6 +1,8 @@
 import UIKit
 
-class SearchView: UIViewController, UISearchResultsUpdating, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
+class SearchViewController: UIViewController, UISearchResultsUpdating, UISearchBarDelegate {
+    
+    // MARK: - Properties
     
     private let tableView = UITableView()
     private let searchController = UISearchController(searchResultsController: nil)
@@ -9,13 +11,26 @@ class SearchView: UIViewController, UISearchResultsUpdating, UITableViewDataSour
     private var searchHistory: [String] = []
     private var showingHistory = true
     
+    private let historyKey = "searchHistory"
+    
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
+        loadHistory()
         setupSearchController()
         setupTableView()
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // 다른 뷰로 넘어갈 때 검색창 상태 초기화
+        searchController.isActive = false
+    }
+    
+    // MARK: - Setup
     
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
@@ -34,7 +49,8 @@ class SearchView: UIViewController, UISearchResultsUpdating, UITableViewDataSour
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(SearchResultCell.self, forCellReuseIdentifier: SearchResultCell.identifier)
-        
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 60
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -44,14 +60,26 @@ class SearchView: UIViewController, UISearchResultsUpdating, UITableViewDataSour
         ])
     }
     
-    // MARK: - 검색어 입력 시 호출
+    // MARK: - History Persistence
+    
+    private func saveHistory() {
+        UserDefaults.standard.set(searchHistory, forKey: historyKey)
+    }
+    
+    private func loadHistory() {
+        if let saved = UserDefaults.standard.stringArray(forKey: historyKey) {
+            searchHistory = saved
+        }
+    }
+    
+    // MARK: - UISearchResultsUpdating
+    
     func updateSearchResults(for searchController: UISearchController) {
         guard let keyword = searchController.searchBar.text, !keyword.isEmpty else {
             showingHistory = true
             tableView.reloadData()
             return
         }
-        
         
         showingHistory = false
         
@@ -63,54 +91,83 @@ class SearchView: UIViewController, UISearchResultsUpdating, UITableViewDataSour
         }
     }
     
-    // MARK: - 검색창 클릭 시 기록 보여주기
+    // MARK: - UISearchBarDelegate
+    
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         showingHistory = true
         tableView.reloadData()
     }
     
-    // MARK: - 취소 시 기록 숨기기
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         showingHistory = false
         tableView.reloadData()
     }
     
-    // MARK: - 테이블뷰 데이터
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let keyword = searchBar.text, !keyword.isEmpty else { return }
+        
+        if !searchHistory.contains(keyword) {
+            searchHistory.insert(keyword, at: 0)
+            if searchHistory.count > 10 {
+                searchHistory.removeLast()
+            }
+            saveHistory()
+        }
+        
+        searchBar.resignFirstResponder()
+        updateSearchResults(for: searchController)
+    }
+    
+    // MARK: - Actions
+    
+    @objc private func addButtonTapped(_ sender: UIButton) {
+        let index = sender.tag
+        guard index < searchResults.count else { return }
+        
+        let placeToAdd = searchResults[index]
+        
+        RouteListManager.shared.add(placeToAdd)
+        
+        let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+        feedbackGenerator.impactOccurred()
+        
+        if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? SearchResultCell {
+            cell.updateButton(isAdded: true, animated: true)
+        }
+    }
+}
+
+// MARK: - UITableViewDataSource & UITableViewDelegate
+
+extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return showingHistory ? searchHistory.count : searchResults.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchResultCell.identifier, for: indexPath) as? SearchResultCell else {
+            return UITableViewCell()
+        }
+        
         if showingHistory {
-            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
             let keyword = searchHistory[indexPath.row]
             cell.textLabel?.text = keyword
-            cell.detailTextLabel?.text = "이전 검색어"
-            cell.detailTextLabel?.textColor = .gray
-            return cell
+            cell.addButton.isHidden = true
         } else {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchResultCell.identifier, for: indexPath) as? SearchResultCell else {
-                return UITableViewCell()
-            }
-            
             let place = searchResults[indexPath.row]
-            cell.titleLabel.text = place.title.replacingOccurrences(of: "<b>", with: "").replacingOccurrences(of: "</b>", with: "")
-            cell.detailLabel.text = place.roadAddress.isEmpty ? place.address : place.roadAddress
+            let isAlreadyAdded = RouteListManager.shared.selectedPlaces.contains { $0.address == place.address }
             
-            // 버튼 액션 정의
-            cell.actionButton.setTitle("추가", for: .normal) // 또는 상황에 따라 "삭제"
-            cell.onButtonTap = { [weak self] in
-                guard self != nil else { return }
-                print("➕ 버튼 눌림: \(place.title)")
-                
-                RouteListManager.shared.add(place)
-            }
-            return cell
+            cell.configure(with: place, isAdded: isAlreadyAdded)
+            
+            cell.addButton.tag = indexPath.row
+            cell.addButton.isHidden = false
+            cell.addButton.addTarget(self, action: #selector(addButtonTapped(_:)), for: .touchUpInside)
         }
+        
+        return cell
     }
     
-    
-    // MARK: - 셀 클릭
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if showingHistory {
             let keyword = searchHistory[indexPath.row]
@@ -121,18 +178,16 @@ class SearchView: UIViewController, UISearchResultsUpdating, UITableViewDataSour
             let place = searchResults[indexPath.row]
             let keyword = searchController.searchBar.text ?? ""
             
-            // ✅ 이 시점에만 검색 기록에 추가
-            if !searchHistory.contains(keyword) {
+            if !searchHistory.contains(keyword) && !keyword.isEmpty {
                 searchHistory.insert(keyword, at: 0)
                 if searchHistory.count > 10 {
                     searchHistory.removeLast()
                 }
+                saveHistory()
             }
             
             print("📍 선택된 장소: \(place.title) / \(place.mapx), \(place.mapy)")
             // TODO: RouteListViewController로 넘기기 가능
         }
     }
-    
-    
 }
