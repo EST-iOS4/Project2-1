@@ -36,8 +36,7 @@ class FavoritesViewController: UIViewController {
     
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    print("📌 FavoritesViewController 화면 표시됨")
-    print("🔢 즐겨찾기 개수: \(favoriteRoutes.count)")
+      isEditing = false
   }
     
   override func setEditing(_ editing: Bool, animated: Bool) {
@@ -87,9 +86,7 @@ class FavoritesViewController: UIViewController {
     do {
       let data = try JSONEncoder().encode(favoriteRoutes)
       UserDefaults.standard.set(data, forKey: favoritesKey)
-      print("✅ 즐겨찾기 저장 완료")
     } catch {
-      print("❌ 즐겨찾기 저장 실패: \(error.localizedDescription)")
     }
   }
     
@@ -99,9 +96,7 @@ class FavoritesViewController: UIViewController {
       let routes = try JSONDecoder().decode([FavoriteRoute].self, from: data)
       self.favoriteRoutes = routes
       tableView.reloadData()
-      print("✅ 즐겨찾기 불러오기 완료")
     } catch {
-      print("❌ 즐겨찾기 불러오기 실패: \(error.localizedDescription)")
     }
   }
 
@@ -223,7 +218,7 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
         routeListVC.navigationItem.title = selectedRoute.name
       }
       
-      self.tabBarController?.selectedIndex = 1
+      self.tabBarController?.selectedIndex = 0 // 지도화면으로 이동
     }
   }
   

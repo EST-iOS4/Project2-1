@@ -4,19 +4,6 @@ import NMapsMap
 
 class MainViewController: UIViewController {
     
-    private var searchButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle(" 🔍 장소를 검색하세요", for: .normal)
-        button.setTitleColor(.gray, for: .normal)
-        button.contentHorizontalAlignment = .left
-        button.backgroundColor = .systemGray6
-        button.layer.cornerRadius = 10
-        button.titleLabel?.font = .systemFont(ofSize: 16)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-
-    
     private let locationManager = CLLocationManager() // iOS 내장 서비스 객체
     private let naverMapView = NMFNaverMapView(frame: .zero) // 네이버 지도 SDK에서 제공하는 지도 객체
     private var currentCoordinate: NMGLatLng?
@@ -26,10 +13,7 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        MapView()
-        SearchButton()
-        searchButton.addTarget(self, action: #selector(didTapSearch), for: .touchUpInside)
-
+        setupMapView()
         checkUserLocate()
     }
     
@@ -38,7 +22,7 @@ class MainViewController: UIViewController {
         updateSelectedRoute()
     }
    
-    private func MapView() { // 화면에 표시되는 지도
+    private func setupMapView() { // 화면에 표시되는 지도
         naverMapView.frame = view.bounds
         naverMapView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         naverMapView.showLocationButton = true
@@ -46,24 +30,12 @@ class MainViewController: UIViewController {
         view.addSubview(naverMapView)
     }
     
-    private func SearchButton() { // 상단의 검색 버튼
-        view.addSubview(searchButton)
-        
-        NSLayoutConstraint.activate([
-            searchButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            searchButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            searchButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            searchButton.heightAnchor.constraint(equalToConstant: 44)
-        ])
-    }
-    
-    private func checkUserLocate() { //처음 시작 시 위치 권환 요청 및 사용자 위치 지속적 업데이트
+    private func checkUserLocate() { // 앱 실행 시 위치 권환 요청
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
     }
 }
-
 
 extension MainViewController: CLLocationManagerDelegate { // 사용자의 위치 업데이트
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -74,24 +46,16 @@ extension MainViewController: CLLocationManagerDelegate { // 사용자의 위치
     }
 }
 
-
-
-extension MainViewController {
-    @objc private func didTapSearch() {
-        let searchVC = SearchViewController()
-        navigationController?.pushViewController(searchVC, animated: true)
-    }
-}
-
-
 extension MainViewController {
     private func updateSelectedRoute() {
+        // 기존 마커/경로 초기화
         markers.forEach { $0.mapView = nil }
         markers.removeAll()
         
         routeLine?.mapView = nil
         routeLine = nil
         
+        // 선택된 장소 → 좌표 변환
         let coordinates: [NMGLatLng] = RouteListManager.shared.selectedPlaces.compactMap {
             guard let mapx = Double($0.mapx),
                   let mapy = Double($0.mapy) else {
@@ -104,6 +68,7 @@ extension MainViewController {
         
         guard !coordinates.isEmpty else { return }
         
+        // 마커 생성
         for (index, coord) in coordinates.enumerated() {
             let marker = NMFMarker(position: coord)
             marker.captionText = "\(index + 1)"
@@ -111,6 +76,7 @@ extension MainViewController {
             markers.append(marker)
         }
         
+        // 경로 라인
         let line = NMGLineString(points: coordinates as [AnyObject])
         let path = NMFPath()
         path.path = line
@@ -119,6 +85,7 @@ extension MainViewController {
         path.mapView = naverMapView.mapView
         self.routeLine = path
         
+        // 카메라 이동
         let cameraUpdate = NMFCameraUpdate(scrollTo: coordinates[0])
         cameraUpdate.animation = .easeIn
         naverMapView.mapView.moveCamera(cameraUpdate)
