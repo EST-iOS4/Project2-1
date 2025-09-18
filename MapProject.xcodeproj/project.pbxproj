@@ -7,13 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8B16DEB32E7005090069AB72 /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = 8B16DEB22E7005090069AB72 /* NMapsMap */; };
-		8B8A64092E6FC74600751B9A /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = 8B8A64082E6FC74600751B9A /* NMapsMap */; };
-		CB34A5482E71445000AA94FE /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = CB34A5472E71445000AA94FE /* NMapsMap */; };
+		8BB7D1F12E7721130058B88D /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = 8BB7D1F02E7721130058B88D /* NMapsMap */; };
+		CB785BB12E77931C00A87105 /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = 8B16DEB22E7005090069AB72 /* NMapsMap */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		8B67AD392E76AA5100543B63 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		8B2985C22E6FC1E200728652 /* MapProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MapProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB785BB22E77931C00A87105 /* MapProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MapProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -42,9 +54,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8B8A64092E6FC74600751B9A /* NMapsMap in Frameworks */,
-				CB34A5482E71445000AA94FE /* NMapsMap in Frameworks */,
-				8B16DEB32E7005090069AB72 /* NMapsMap in Frameworks */,
+				CB785BB12E77931C00A87105 /* NMapsMap in Frameworks */,
+				8BB7D1F12E7721130058B88D /* NMapsMap in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,16 +66,8 @@
 			isa = PBXGroup;
 			children = (
 				8B2985C42E6FC1E200728652 /* MapProject */,
-				8B2985C32E6FC1E200728652 /* Products */,
+				CB785BB22E77931C00A87105 /* MapProject.app */,
 			);
-			sourceTree = "<group>";
-		};
-		8B2985C32E6FC1E200728652 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8B2985C22E6FC1E200728652 /* MapProject.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -77,6 +80,7 @@
 				8B2985BE2E6FC1E200728652 /* Sources */,
 				8B2985BF2E6FC1E200728652 /* Frameworks */,
 				8B2985C02E6FC1E200728652 /* Resources */,
+				8B67AD392E76AA5100543B63 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -87,12 +91,11 @@
 			);
 			name = MapProject;
 			packageProductDependencies = (
-				8B8A64082E6FC74600751B9A /* NMapsMap */,
 				8B16DEB22E7005090069AB72 /* NMapsMap */,
-				CB34A5472E71445000AA94FE /* NMapsMap */,
+				8BB7D1F02E7721130058B88D /* NMapsMap */,
 			);
 			productName = MapProject;
-			productReference = 8B2985C22E6FC1E200728652 /* MapProject.app */;
+			productReference = CB785BB22E77931C00A87105 /* MapProject.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -120,10 +123,10 @@
 			mainGroup = 8B2985B92E6FC1E200728652;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				CB34A5462E71445000AA94FE /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
+				8BB7D1EF2E7721130058B88D /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
 			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 8B2985C32E6FC1E200728652 /* Products */;
+			productRefGroup = 8B2985B92E6FC1E200728652;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -163,9 +166,11 @@
 				DEVELOPMENT_TEAM = WU5AU2G459;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MapProject/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "내 위치를 지도에 표시하기 위해 사용합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -191,9 +196,11 @@
 				DEVELOPMENT_TEAM = WU5AU2G459;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MapProject/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "내 위치를 지도에 표시하기 위해 사용합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -354,9 +361,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		CB34A5462E71445000AA94FE /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */ = {
+		8BB7D1EF2E7721130058B88D /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/navermaps/SPM-NMapsMap";
+			repositoryURL = "https://github.com/navermaps/SPM-NMapsMap.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 3.22.1;
@@ -369,13 +376,9 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = NMapsMap;
 		};
-		8B8A64082E6FC74600751B9A /* NMapsMap */ = {
+		8BB7D1F02E7721130058B88D /* NMapsMap */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = NMapsMap;
-		};
-		CB34A5472E71445000AA94FE /* NMapsMap */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CB34A5462E71445000AA94FE /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
+			package = 8BB7D1EF2E7721130058B88D /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
 			productName = NMapsMap;
 		};
 /* End XCSwiftPackageProductDependency section */
