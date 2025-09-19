@@ -1,0 +1,2 @@
+// 네이버 지도 NCP 키는 private 파일에서 주입하도록 권장
+#include? "Debug.private.xcconfig"

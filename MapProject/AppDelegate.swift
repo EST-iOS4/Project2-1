@@ -5,23 +5,26 @@ import NMapsMap
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    NMFAuthManager.shared().ncpKeyId = "xygubqv6qx"
-    
+
+    // Info.plist -> $(NaverMapNcpKeyId) -> xcconfig에서 주입
+    if let ncpKeyId = Bundle.main.object(forInfoDictionaryKey: "NaverMapNcpKeyId") as? String,
+       !ncpKeyId.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+      NMFAuthManager.shared().ncpKeyId = ncpKeyId
+    } else {
+      assertionFailure("NaverMapNcpKeyId is missing. Please set it in xcconfig and Info.plist.")
+      // 개발 중 크래시를 원치 않으면 로그만 남기고 넘어가도 됩니다.
+      // print("⚠️ NaverMapNcpKeyId is missing.")
+    }
+
     return true
   }
 
   // MARK: UISceneSession Lifecycle
 
   func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-    // Called when a new scene session is being created.
-    // Use this method to select a configuration to create the new scene with.
     return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
   }
 
   func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-    // Called when the user discards a scene session.
-    // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-    // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
   }
 }
-

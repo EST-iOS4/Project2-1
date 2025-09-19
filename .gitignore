@@ -2,3 +2,6 @@
 *.xcuserstate
 xcuserdata/
 .DS_Store.DS_Store
+
+Debug.private.xcconfig
+Release.private.xcconfig
